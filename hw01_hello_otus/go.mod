@@ -1,4 +1,4 @@
-module github.com/antonkanevsky/hw01_hello_otus
+module github.com/antonkanevsky/go-hw-test/hw01_hello_otus
 
 go 1.17
 
