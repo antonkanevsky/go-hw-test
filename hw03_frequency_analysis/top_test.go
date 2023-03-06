@@ -6,9 +6,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// Change to true if needed.
-var taskWithAsteriskIsCompleted = false
-
 var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
 	другом   Кристофером   Робином,   головой   вниз,  пересчитывая
 	ступеньки собственным затылком:  бум-бум-бум.  Другого  способа
@@ -49,34 +46,63 @@ func TestTop10(t *testing.T) {
 	})
 
 	t.Run("positive test", func(t *testing.T) {
-		if taskWithAsteriskIsCompleted {
-			expected := []string{
-				"а",         // 8
-				"он",        // 8
-				"и",         // 6
-				"ты",        // 5
-				"что",       // 5
-				"в",         // 4
-				"его",       // 4
-				"если",      // 4
-				"кристофер", // 4
-				"не",        // 4
-			}
-			require.Equal(t, expected, Top10(text))
-		} else {
-			expected := []string{
-				"он",        // 8
-				"а",         // 6
-				"и",         // 6
-				"ты",        // 5
-				"что",       // 5
-				"-",         // 4
-				"Кристофер", // 4
-				"если",      // 4
-				"не",        // 4
-				"то",        // 4
-			}
-			require.Equal(t, expected, Top10(text))
+		tests := []struct {
+			name     string
+			text     string
+			expected []string
+		}{
+			{
+				name: "test with commas",
+				text: "cat and dog, one dog,two cats and one man",
+				expected: []string{
+					"and",
+					"one",
+					"cat",
+					"cats",
+					"dog,",
+					"dog,two",
+					"man",
+				},
+			},
+			{
+				name: "test cyrillic words search",
+				text: text,
+				expected: []string{
+					"он",        // 8
+					"а",         // 6
+					"и",         // 6
+					"ты",        // 5
+					"что",       // 5
+					"-",         // 4
+					"Кристофер", // 4
+					"если",      // 4
+					"не",        // 4
+					"то",        // 4
+				},
+			},
+			{
+				name: "test upper and lower case",
+				text: "Какая-то нога нога ... кто бы ее знал, ноги бывают разные. Нога - важная часть тела, тел тоже много",
+				expected: []string{
+					"нога",     // 2
+					"-",        // 1
+					"...",      // 1
+					"Какая-то", // 1
+					"Нога",     // 1
+					"бы",       // 1
+					"бывают",   // 1
+					"важная",   // 1
+					"ее",       // 1
+					"знал,",    // 1
+				},
+			},
+		}
+
+		for _, tc := range tests {
+			tc := tc
+			t.Run(tc.name, func(t *testing.T) {
+				require.Equal(t, tc.expected, Top10(tc.text))
+			})
 		}
 	})
 }
