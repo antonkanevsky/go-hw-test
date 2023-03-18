@@ -5,12 +5,7 @@ import (
 	"strings"
 )
 
-type WordFrequency struct {
-	Word string
-	Freq int
-}
-
-const MaxCnt = 10
+const maxCnt = 10
 
 func Top10(s string) []string {
 	givenWords := strings.Fields(s)
@@ -19,30 +14,22 @@ func Top10(s string) []string {
 		wordsFreqMap[word]++
 	}
 
-	wordFrequencyList := make([]WordFrequency, len(wordsFreqMap))
-
-	i := 0
-	for word, freq := range wordsFreqMap {
-		wordFrequencyList[i].Word = word
-		wordFrequencyList[i].Freq = freq
-		i++
+	wordsList := make([]string, 0, len(wordsFreqMap))
+	for word := range wordsFreqMap {
+		wordsList = append(wordsList, word)
 	}
 
-	sort.Slice(wordFrequencyList, func(i, j int) bool {
-		if wordFrequencyList[i].Freq != wordFrequencyList[j].Freq {
-			return wordFrequencyList[i].Freq > wordFrequencyList[j].Freq
+	sort.Slice(wordsList, func(i, j int) bool {
+		if wordsFreqMap[wordsList[i]] != wordsFreqMap[wordsList[j]] {
+			return wordsFreqMap[wordsList[i]] > wordsFreqMap[wordsList[j]]
 		}
 
-		return strings.Compare(wordFrequencyList[i].Word, wordFrequencyList[j].Word) == -1
+		return strings.Compare(wordsList[i], wordsList[j]) == -1
 	})
 
-	topWords := []string{}
-	for i := 0; i < len(wordFrequencyList); i++ {
-		if i == MaxCnt {
-			break
-		}
-		topWords = append(topWords, wordFrequencyList[i].Word)
+	if len(wordsList) >= maxCnt {
+		return wordsList[:maxCnt]
 	}
 
-	return topWords
+	return wordsList
 }
